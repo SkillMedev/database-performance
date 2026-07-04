@@ -11,17 +11,21 @@ Plan how to split one too-large table into partitions (or shards) keyed to its r
 1. **Confirm partitioning is warranted.** Get the row count and on-disk size. Below roughly 50-100M rows or a few hundred GB, a well-indexed single table usually beats a partitioned one; recommend staying single unless retention or vacuum pain forces the issue. Never partition to compensate for a missing index — that is index-advisor's job; add the index first and re-measure.
 2. **Characterize the access pattern.** Capture the hot queries' WHERE clauses, the retention/deletion policy, and write distribution. The partition key must come from this evidence, not a guess.
 3. **Pick the strategy from that pattern.**
-   - **Range** — time-series or any naturally ordered key (e.g. `created_at` by month). Old data leaves via `DROP`/`DETACH PARTITION` instead of a giant `DELETE`.
+   - **Range** — time-series or any naturally ordered key (e.g. `created_at` by month). Old data leaves via `DROP`/`DETACH PARTITION` instead of a giant `DELETE`. Monthly granularity is the sane default for multi-year retention; drop to weekly or daily only when a single month would exceed roughly 50-100 GB.
    - **List** — a small fixed set of discrete values (region, tenant tier).
-   - **Hash** — no natural range but you must cap any single child's size; use a fixed modulus to spread writes evenly.
+   - **Hash** — no natural range but you must cap any single child's size; use a fixed modulus (a power of two, commonly 8-64) to spread writes evenly, because changing the modulus later means rewriting the table.
 4. **Choose the partition key.** It must appear in the WHERE clause of hot queries (or the planner cannot prune and scans every child), align with the retention policy (drop by time), and align with the largest indexes. Reject any column that is frequently updated — moving a row across partitions on UPDATE is expensive.
 5. **Resolve the constraint and operational requirements.**
    - In Postgres declarative partitioning, every unique constraint and primary key must include the partition key — design composite keys accordingly.
-   - Automate partition creation (pg_partman or a scheduled job) so writes never hit a missing partition.
-   - Keep partition count bounded (low hundreds, not thousands) to avoid planning bloat.
+   - Automate partition creation (pg_partman or a scheduled job) so writes never hit a missing partition; pre-create at least 3 future partitions as a buffer.
+   - Keep partition count bounded (low hundreds, not thousands) to avoid planning bloat, and size individual partitions so maintenance stays fast — roughly 10-50 GB per child is a comfortable working range.
    - Verify foreign-key behavior against your engine version's partitioning limits.
 6. **Decide partition vs shard.** Partitioning stays on one node. Reach for sharding (Citus, Vitess, or app-level routing) only when a single node's write throughput or storage is the hard ceiling — it adds distributed-transaction and rebalancing cost. If sharding, pick a shard key with even distribution and no cross-shard joins on the hot path.
 7. **Write the plan.** State chosen strategy, key, composite-key changes, creation/automation mechanism, retention operation, and the migration approach to convert the existing table.
+
+## Deliverable
+
+Produce a partitioning plan document containing: the verdict (partition / stay single / shard) with the measured row count and on-disk size backing it, the chosen strategy and partition key with the hot WHERE clauses and retention policy that justify them, the composite-key and constraint changes required, the partition-creation automation mechanism, the retention operation (which partitions get dropped and when), the migration approach for the existing table, and the expected partition count over the table's lifetime.
 
 ## Quality bar
 
