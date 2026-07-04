@@ -9,7 +9,7 @@ Reach for this when a production database is slow or strained and you need a ver
 ## Install
 
 - **From the catalog:** [skillme.dev/pack/database-performance](https://skillme.dev/pack/database-performance) — install the whole pack into Claude in one step.
-- **With the skills CLI:** `npx skills add aouellets/database-performance`
+- **With the skills CLI:** `npx skills add SkillMedev/database-performance`
 - **Manually:** copy any `skills/<slug>/SKILL.md` into your Claude skills directory.
 
 ## Skills in this pack
