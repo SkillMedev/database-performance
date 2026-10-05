@@ -1,16 +1,17 @@
 # Database Performance & Administration
 
-**For backend engineers: make slow queries fast and keep production Postgres healthy.** — built in-house by [Skill&nbsp;Me](https://skillme.dev).
+**For backend engineers: make slow queries fast and keep production Postgres healthy.** — built in-house by [Skill&nbsp;Me](https://skillme.dev/?utm_source=github&utm_medium=readme&utm_campaign=pack-database-performance).
 
 Reach for this when a production database is slow or strained and you need a verifiable fix, not folklore. It walks the real diagnose-to-resolve path: catch N+1s in your ORM, read an EXPLAIN plan down to the bottleneck node, advise the right index, rewrite pathological SQL, decide when to partition, size connection pools, ship migrations with zero-downtime locking, and chase down stale reads from replica lag. Every fix is EXPLAIN-checkable, so you ship the change knowing it actually moved the number.
 
-⭐ **If this is useful, star the repo** — it's how we gauge what to build next.
-
 ## Install
 
-- **From the catalog:** [skillme.dev/pack/database-performance](https://skillme.dev/pack/database-performance) — install the whole pack into Claude in one step.
+- **Claude, ChatGPT, Codex, Cursor (connector):** [install the whole pack from skillme.dev](https://skillme.dev/pack/database-performance?utm_source=github&utm_medium=readme&utm_campaign=pack-database-performance) — one connection, then ask for any skill by name.
+- **As files for Codex, Cursor, or Claude Code:** `npx @skillme/cli add n-plus-one-hunter explain-plan-reader index-advisor query-rewriter partition-planner connection-pool-tuner migration-safety-checker replication-lag-debugger --target all`
 - **With the skills CLI:** `npx skills add SkillMedev/database-performance`
-- **Manually:** copy any `skills/<slug>/SKILL.md` into your Claude skills directory.
+- **Manually:** copy any `skills/<slug>/SKILL.md` into `.agents/skills/`, `.cursor/skills/`, or `.claude/skills/`.
+
+⭐ **If this is useful, star the repo** — it's how we gauge what to build next.
 
 ## Skills in this pack
 
@@ -26,4 +27,4 @@ Reach for this when a production database is slow or strained and you need a ver
 ## License
 
 MIT — see [LICENSE](LICENSE). Skills are portable `SKILL.md` files; the canonical
-copies live in the [Skill&nbsp;Me catalog](https://skillme.dev).
+copies live in the [Skill&nbsp;Me catalog](https://skillme.dev/browse?utm_source=github&utm_medium=readme&utm_campaign=pack-database-performance).
